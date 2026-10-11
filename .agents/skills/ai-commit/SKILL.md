@@ -225,7 +225,9 @@ research-log/logs/commit-plans/commit-plan-YYYYMMDD-HHMMSS.md
 ```
 
 Before creating the directory or file, inspect what exists and **never overwrite an
-existing plan**.
+existing plan**. Commit plans are ephemeral review artifacts: once execution is
+authorized and completed via §6, the consumed plan files are cleaned up to prevent
+unnecessary files from lingering in the workspace.
 
 ### Required sections
 
@@ -301,6 +303,10 @@ Before each approved commit:
 5. Stop if secrets or ambiguous changes are detected.
 6. Commit **one** approved commit.
 7. Report accurately: hash, message, files, and what remains uncommitted.
+
+After all approved commits are completed:
+
+8. **Clean up commit plans:** Automatically delete the consumed commit plan Markdown file(s) from `research-log/logs/commit-plans/` (and remove the directory if empty) so as to remove unnecessary temporary files from the workspace.
 
 **Never push.** Report each completed commit truthfully; never claim a commit
 succeeded when it did not.
