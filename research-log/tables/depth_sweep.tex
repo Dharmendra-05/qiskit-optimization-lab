@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{QAOA depth scaling empirical metrics ($p \in \{1, 2, 3\}$, COBYLA optimizer, 4096 shots).}
+\label{tab:depth_sweep}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{cccccc}
+\toprule
+\textbf{QAOA Depth ($p$)} & \textbf{Approximation Ratio ($\alpha$)} & \textbf{Feasibility Yield (\%)} & \textbf{Optimal Cost $C(x^*)$} & \textbf{Optimal Utility $\mathcal{U}(x^*)$} & \textbf{Runtime (s)} \\
+\midrule
+1 & 1.0000 & 41.65\% & -1.7044 & 1.7044 & 1.42 \\
+2 & 1.0000 & 77.00\% & -1.7044 & 1.7044 & 8.38 \\
+3 & 1.0000 & 77.05\% & -1.7044 & 1.7044 & 9.77 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

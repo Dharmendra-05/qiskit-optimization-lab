@@ -1,0 +1,87 @@
+\chapter{Theoretical Background}
+\label{chap:background}
+
+\section{Modern Portfolio Theory and Combinatorial Selection}
+Modern Portfolio Theory (MPT), pioneered by Harry Markowitz in 1952 \cite{markowitz1952portfolio}, establishes that rational investors evaluate asset portfolios based on expected return and collective portfolio variance. In continuous portfolio selection, asset weights $w_i \in [0, 1]$ satisfy $\sum_{i} w_i = 1$. When formulated continuously, minimizing risk for a targeted return constitutes a convex quadratic program solvable in polynomial time via standard interior-point methods.
+
+In many physical resource allocation domains, however, investment decisions are intrinsically discrete:
+\begin{equation}
+x_i \in \{0, 1\}, \quad \forall i \in \{0, \dots, N-1\}
+\end{equation}
+where $x_i = 1$ denotes a discrete decision to fund and construct asset $i$, and $x_i = 0$ indicates rejection. Imposing a fixed cardinality budget $\sum_{i=0}^{N-1} x_i = B$ restricts candidate solutions to the binomial coefficient subspace:
+\begin{equation}
+\Omega_{\text{feasible}} = \left\{ x \in \{0, 1\}^N \;\middle|\; \sum_{i=0}^{N-1} x_i = B \right\}, \quad |\Omega_{\text{feasible}}| = \binom{N}{B}
+\end{equation}
+The discrete binary portfolio selection problem is NP-hard. As the catalog size $N$ increases, the state space $2^N$ expands exponentially, rendering exhaustive enumeration computationally intractable for large-scale instances.
+
+\section{Quadratic Unconstrained Binary Optimization (QUBO)}
+Quadratic Unconstrained Binary Optimization (QUBO) has emerged as a universal language for combinatorial optimization \cite{glover2018tutorial, lucas2014ising}. A standard QUBO problem minimizes a quadratic form over boolean vectors:
+\begin{equation}
+\min_{x \in \{0, 1\}^N} x^\top Q x = \min_{x \in \{0, 1\}^N} \left( \sum_{i=0}^{N-1} Q_{ii} x_i + \sum_{i < j} Q_{ij} x_i x_j \right)
+\end{equation}
+where $Q \in \mathbb{R}^{N \times N}$ is an upper-triangular or symmetric real matrix. Because binary variables are idempotent ($x_i^2 = x_i$), linear terms correspond directly to diagonal matrix entries $Q_{ii}$, while pairwise coupling coefficients occupy off-diagonal entries $Q_{ij}$ ($i < j$).
+
+Constrained combinatorial problems can be converted into QUBO instances by incorporating equality constraints into the objective function through quadratic penalty terms \cite{lucas2014ising}. For an equality constraint $g(x) = 0$, the penalty term $\lambda [g(x)]^2$ is added to the objective, where $\lambda > 0$ is a scalar penalty multiplier chosen to render all constraint-violating assignments energetically unfavorable relative to the optimal feasible assignment.
+
+\section{The Ising Spin Model and Pauli Operators}
+In condensed matter physics, the Ising spin-glass Hamiltonian describes a system of interacting magnetic dipole moments:
+\begin{equation}
+\mathcal{H}_{\text{Ising}} = \sum_{i < j} J_{ij} s_i s_j + \sum_{i=0}^{N-1} h_i s_i + c_0
+\end{equation}
+where $s_i \in \{-1, +1\}$ denotes the discrete spin orientation along the quantization axis, $J_{ij}$ represents pairwise exchange coupling, $h_i$ represents local magnetic fields, and $c_0$ is an energy offset.
+
+The isomorphism between QUBO and the Ising model is established via the linear affine mapping:
+\begin{equation}
+\label{eq:affine_spin}
+s_i = 1 - 2x_i \iff x_i = \frac{1 - s_i}{2}
+\end{equation}
+Under this substitution, the boolean domain $x_i \in \{0, 1\}$ maps bijectively onto the physical spin domain $s_i \in \{+1, -1\}$.
+
+Promoting classical spin variables to quantum mechanical observables on an $N$-qubit Hilbert space $\mathcal{H}_{2^N} = (\mathbb{C}^2)^{\otimes N}$ yields the diagonal Pauli-$Z$ operator:
+\begin{equation}
+s_i \longrightarrow Z_i = I^{\otimes (n-1-i)} \otimes Z \otimes I^{\otimes i}
+\end{equation}
+where $Z$ is the standard single-qubit Pauli-Z gate:
+\begin{equation}
+Z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}, \quad Z |0\rangle = +1 |0\rangle, \quad Z |1\rangle = -1 |1\rangle
+\end{equation}
+Consequently, the binary variable operator equivalence becomes:
+\begin{equation}
+\label{eq:operator_equiv}
+x_i \longrightarrow \frac{I - Z_i}{2}
+\end{equation}
+Because all Pauli-$Z$ operators commute ($[Z_i, Z_j] = 0$), the resulting Cost Hamiltonian $\hat{H}_C$ is diagonal in the computational basis $\{|x\rangle\}$, where each basis state $|x\rangle = |x_{N-1} \dots x_0\rangle$ is an eigenstate of $\hat{H}_C$ with eigenvalue equal to the classical cost function $C(x)$.
+
+\section{The Quantum Approximate Optimization Algorithm (QAOA)}
+The Quantum Approximate Optimization Algorithm (QAOA), introduced by Farhi, Goldstone, and Gutmann in 2014 \cite{farhi2014quantum}, is a variational quantum algorithm designed to find near-optimal solutions to combinatorial problems on noisy intermediate-scale quantum (NISQ) devices \cite{preskill2018quantum, cerezo2021variational}.
+
+QAOA initializes the $N$-qubit register in an equal superposition of all $2^N$ computational basis states:
+\begin{equation}
+|+\rangle^{\otimes N} = \frac{1}{\sqrt{2^N}} \sum_{x \in \{0, 1\}^N} |x\rangle = H^{\otimes N} |0\rangle^{\otimes N}
+\end{equation}
+where $H$ is the Hadamard gate. The algorithm then applies $p$ alternating layers of two non-commuting unitary evolutions parameterized by variational angles $\vec{\gamma} = (\gamma_1, \dots, \gamma_p)$ and $\vec{\beta} = (\beta_1, \dots, \beta_p)$:
+
+\begin{enumerate}
+    \item \textbf{Cost Unitary $U_C(\gamma_k)$:} Applies phase separation driven by the diagonal Cost Hamiltonian:
+    \begin{equation}
+    U_C(\gamma_k) = \exp\left( -i \gamma_k \hat{H}_C \right)
+    \end{equation}
+    Because $\hat{H}_C$ contains single-qubit $Z$ and two-qubit $ZZ$ interactions, $U_C(\gamma_k)$ decomposes into single-qubit phase rotations $R_z(2\gamma_k h_i)$ and two-qubit entangling gates $R_{zz}(2\gamma_k J_{ij})$.
+    
+    \item \textbf{Mixer Unitary $U_B(\beta_k)$:} Applies transverse magnetic field rotations driven by the non-commuting mixer Hamiltonian $\hat{H}_B = \sum_{i=0}^{N-1} X_i$:
+    \begin{equation}
+    U_B(\beta_k) = \exp\left( -i \beta_k \hat{H}_B \right) = \prod_{i=0}^{N-1} \exp\left( -i \beta_k X_i \right) = \prod_{i=0}^{N-1} R_x(2\beta_k)
+    \end{equation}
+    where $X_i$ is the Pauli-$X$ bit-flip operator.
+\end{enumerate}
+
+The complete $p$-layer variational trial state is given by:
+\begin{equation}
+\label{eq:qaoa_state}
+|\psi(\vec{\gamma}, \vec{\beta})\rangle = \left[ \prod_{k=1}^p U_B(\beta_k) U_C(\gamma_k) \right] |+\rangle^{\otimes N}
+\end{equation}
+In the hybrid classical-quantum loop, a quantum processor (or statevector simulator) evaluates the energy expectation value:
+\begin{equation}
+E(\vec{\gamma}, \vec{\beta}) = \langle \psi(\vec{\gamma}, \vec{\beta}) | \hat{H}_C | \psi(\vec{\gamma}, \vec{\beta}) \rangle
+\end{equation}
+A classical optimizer iteratively updates the parameters $(\vec{\gamma}, \vec{\beta})$ to minimize $E(\vec{\gamma}, \vec{\beta})$. Once optimal angles $(\vec{\gamma}^*, \vec{\beta}^*)$ are found, the circuit is sampled in the computational basis to yield candidate bitstrings with high probability of observing the optimal solution $x^*$.

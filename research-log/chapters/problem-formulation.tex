@@ -1,0 +1,124 @@
+\chapter{Problem Formulation and Mathematical Derivation}
+\label{chap:problem-formulation}
+
+\section{The Constrained Portfolio Optimization Model}
+Let $N$ denote the total number of candidate clean infrastructure projects available for investment. We define a binary decision vector $x = (x_0, x_1, \dots, x_{N-1})^\top \in \{0, 1\}^N$, where:
+\begin{equation}
+x_i = \begin{cases}
+1, & \text{if asset } i \text{ is funded and constructed}, \\
+0, & \text{otherwise}.
+\end{cases}
+\end{equation}
+
+Each candidate asset $i$ is characterized by:
+\begin{enumerate}
+    \item An expected clean energy generation return $r_i \in \mathbb{R}^+$, representing normalized electrical yield.
+    \item A symmetric positive semi-definite covariance matrix $\Sigma \in \mathbb{R}^{N \times N}$, capturing inter-asset generation volatility and meteorological correlation.
+\end{enumerate}
+
+The Markowitz portfolio utility function $\mathcal{U}(x)$ balances total expected return against collective covariance risk:
+\begin{equation}
+\label{eq:markowitz_utility}
+\mathcal{U}(x) = \sum_{i=0}^{N-1} r_i x_i - \frac{q}{2} \sum_{i=0}^{N-1}\sum_{j=0}^{N-1} \Sigma_{ij} x_i x_j = r^\top x - \frac{q}{2} x^\top \Sigma x
+\end{equation}
+where $q \ge 0$ represents the decision-maker's risk-aversion parameter. When $q = 0$, the objective purely maximizes nominal generation yield; as $q$ increases, correlated variance across selected assets is increasingly penalized.
+
+The portfolio is subject to an exact capital budget constraint requiring that exactly $B$ assets be funded:
+\begin{equation}
+\label{eq:budget_constraint}
+\sum_{i=0}^{N-1} x_i = B, \quad B \in \{1, \dots, N-1\}
+\end{equation}
+
+\section{QUBO Formulation and Constraint Penalty Expansion}
+To map the constrained problem into an unconstrained binary minimization objective suitable for quantum processing, we define the scalar cost function $C(x)$ by negating the utility and appending a quadratic penalty for budget violation:
+\begin{equation}
+\label{eq:cost_function}
+C(x) = -\mathcal{U}(x) + \lambda \left( \sum_{i=0}^{N-1} x_i - B \right)^2
+\end{equation}
+where $\lambda > 0$ is the penalty multiplier. For any feasible bitstring satisfying $\sum_i x_i = B$, the penalty evaluates identically to zero, ensuring that $C(x_{\text{feasible}}) = -\mathcal{U}(x_{\text{feasible}})$.
+
+We expand the squared constraint sum:
+\begin{align}
+\left( \sum_{i=0}^{N-1} x_i - B \right)^2 &= \left( \sum_{i=0}^{N-1} x_i \right)^2 - 2B \left( \sum_{i=0}^{N-1} x_i \right) + B^2 \nonumber \\
+&= \sum_{i=0}^{N-1} x_i^2 + 2 \sum_{i < j} x_i x_j - 2B \sum_{i=0}^{N-1} x_i + B^2
+\end{align}
+Because binary variables satisfy idempotency ($x_i^2 = x_i$ for $x_i \in \{0, 1\}$), the diagonal sum simplifies:
+\begin{equation}
+\sum_{i=0}^{N-1} x_i^2 - 2B \sum_{i=0}^{N-1} x_i = (1 - 2B) \sum_{i=0}^{N-1} x_i
+\end{equation}
+Thus, the penalty term expands to:
+\begin{equation}
+\label{eq:penalty_expansion}
+\lambda \left( \sum_{i=0}^{N-1} x_i - B \right)^2 = \lambda (1 - 2B) \sum_{i=0}^{N-1} x_i + 2\lambda \sum_{i < j} x_i x_j + \lambda B^2
+\end{equation}
+
+Similarly, expanding the Markowitz utility $-\mathcal{U}(x)$ using the symmetry of the covariance matrix ($\Sigma_{ij} = \Sigma_{ji}$):
+\begin{align}
+-\mathcal{U}(x) &= -\sum_{i=0}^{N-1} r_i x_i + \frac{q}{2} \left( \sum_{i=0}^{N-1} \Sigma_{ii} x_i^2 + 2 \sum_{i < j} \Sigma_{ij} x_i x_j \right) \nonumber \\
+&= \sum_{i=0}^{N-1} \left( -r_i + \frac{q}{2} \Sigma_{ii} \right) x_i + q \sum_{i < j} \Sigma_{ij} x_i x_j
+\end{align}
+
+Combining all linear and pairwise contributions into standard QUBO upper-triangular matrix form:
+\begin{equation}
+\label{eq:qubo_standard_form}
+C(x) = \sum_{i=0}^{N-1} Q_{ii} x_i + \sum_{i < j} Q_{ij} x_i x_j + c_{\text{base}}
+\end{equation}
+where:
+\begin{align}
+Q_{ii} &= -r_i + \frac{q}{2} \Sigma_{ii} + \lambda (1 - 2B) \label{eq:q_diag} \\
+Q_{ij} &= q \Sigma_{ij} + 2\lambda \quad (\forall i < j) \label{eq:q_ij} \\
+c_{\text{base}} &= \lambda B^2 \label{eq:c_base}
+\end{align}
+
+\section{Affine Spin Mapping to the Ising Cost Hamiltonian}
+To implement the QUBO cost function on quantum hardware, we replace each binary variable $x_i$ with the Pauli-$Z$ operator according to Equation \eqref{eq:operator_equiv}:
+\begin{equation}
+x_i \longrightarrow \frac{I - Z_i}{2}
+\end{equation}
+
+Substituting this into the linear term $Q_{ii} x_i$:
+\begin{equation}
+Q_{ii} x_i \longrightarrow Q_{ii} \left( \frac{I - Z_i}{2} \right) = \frac{Q_{ii}}{2} I - \frac{Q_{ii}}{2} Z_i
+\end{equation}
+
+For the quadratic pairwise terms $Q_{ij} x_i x_j$ ($i < j$):
+\begin{align}
+Q_{ij} x_i x_j &\longrightarrow Q_{ij} \left( \frac{I - Z_i}{2} \right) \left( \frac{I - Z_j}{2} \right) \nonumber \\
+&= \frac{Q_{ij}}{4} \left( I - Z_i - Z_j + Z_i Z_j \right) \nonumber \\
+&= \frac{Q_{ij}}{4} I - \frac{Q_{ij}}{4} Z_i - \frac{Q_{ij}}{4} Z_j + \frac{Q_{ij}}{4} Z_i Z_j
+\end{align}
+
+Summing over all indices $i < j$ and combining terms, the Hamiltonian takes the standard 2-local Ising form:
+\begin{equation}
+\label{eq:cost_hamiltonian}
+\hat{H}_C = \sum_{i < j} J_{ij} Z_i Z_j + \sum_{i=0}^{N-1} h_i Z_i + c_0 \cdot I
+\end{equation}
+where the physical coupling coefficients and local magnetic fields are analytically determined by:
+\begin{align}
+J_{ij} &= \frac{Q_{ij}}{4} = \frac{q \Sigma_{ij} + 2\lambda}{4} \label{eq:ising_j} \\
+h_i &= -\frac{Q_{ii}}{2} - \sum_{j \neq i} \frac{Q_{\min(i,j), \max(i,j)}}{4} \label{eq:ising_h} \\
+c_0 &= \lambda B^2 + \sum_{i=0}^{N-1} \frac{Q_{ii}}{2} + \sum_{i < j} \frac{Q_{ij}}{4} \label{eq:ising_c0}
+\end{align}
+
+\section{Ground-State Equivalence Proof}
+\begin{theorem}[Ising--QUBO Equivalence]
+Let $|x\rangle = |x_{N-1} \dots x_0\rangle$ denote any computational basis state in $\mathcal{H}_{2^N}$, where $x_i \in \{0, 1\}$. Then $|x\rangle$ is an eigenstate of the Cost Hamiltonian $\hat{H}_C$ with eigenvalue identically equal to the classical cost $C(x)$:
+\begin{equation}
+\hat{H}_C |x\rangle = C(x) |x\rangle \implies \langle x | \hat{H}_C | x \rangle = C(x)
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+For any single qubit in computational basis state $|x_i\rangle$:
+\begin{equation}
+Z_i |x_i\rangle = (-1)^{x_i} |x_i\rangle = (1 - 2x_i) |x_i\rangle
+\end{equation}
+Substituting $(1 - 2x_i)$ into the operator $\frac{I - Z_i}{2}$ yields:
+\begin{equation}
+\left( \frac{I - Z_i}{2} \right) |x_i\rangle = \frac{1 - (1 - 2x_i)}{2} |x_i\rangle = x_i |x_i\rangle
+\end{equation}
+Because $\hat{H}_C$ was constructed strictly via algebraic substitution of $\frac{I - Z_i}{2}$ into the scalar polynomial $C(x)$, each term in $\hat{H}_C$ acts on $|x\rangle$ as multiplication by the corresponding term in $C(x)$. Thus $\hat{H}_C |x\rangle = C(x) |x\rangle$.
+\end{proof}
+
+This theorem guarantees that the quantum ground state of $\hat{H}_C$ corresponds precisely to the global minimum of the classical constrained optimization problem.
+In our software implementation, this property is numerically asserted across all $2^N$ basis states via \texttt{verify\_hamiltonian\_ground\_state} (with floating-point residual $\Delta E < 10^{-12}$).

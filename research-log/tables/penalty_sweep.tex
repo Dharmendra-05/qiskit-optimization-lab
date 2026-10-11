@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Sensitivity analysis of the penalty multiplier $\lambda \in [0.5, 5.0]$ on QAOA ($p=1$) performance.}
+\label{tab:penalty_sweep}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Penalty Multiplier ($\lambda$)} & \textbf{Feasibility Yield (\%)} & \textbf{Approximation Ratio ($\alpha$)} & \textbf{Feasible Optimum Found} & \textbf{Regime Interpretation} \\
+\midrule
+0.5 & 34.42\% & 1.0000 & Yes & Under-penalized (infeasible leakage) \\
+1.0 & 16.02\% & 1.0000 & Yes & Under-penalized (diffuse sampling) \\
+1.5 & 31.49\% & 1.0000 & Yes & Intermediate transition \\
+2.0 & 23.58\% & 1.0000 & Yes & Intermediate transition \\
+\textbf{2.5} & \textbf{42.58\%} & \textbf{1.0000} & \textbf{Yes} & \textbf{Calibrated optimal trade-off} \\
+3.5 & 19.14\% & 1.0000 & Yes & Over-penalized (steep valleys) \\
+5.0 & 22.51\% & 1.0000 & Yes & Landscape distorted (risk of trapping) \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

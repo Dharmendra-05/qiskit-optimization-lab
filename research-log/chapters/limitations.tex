@@ -1,0 +1,42 @@
+\chapter{Critical Limitations and Hardware Realities}
+\label{chap:limitations}
+
+\section{Scientific Integrity: No Quantum Advantage Claim}
+A foundational commitment of this research report is absolute scientific integrity. We state plainly: \textbf{this work does not demonstrate, nor does it claim, quantum advantage or quantum speedup.}
+
+For the evaluated $N = 5$ instance, classical exact brute-force search enumerates all $2^5 = 32$ states in $0.49$ milliseconds on a standard desktop CPU, guaranteeing identification of the globally optimal solution. In contrast, noiseless statevector simulation of QAOA on the same processor requires $1.42$ seconds at depth $p=1$ and $9.77$ seconds at depth $p=3$---nearly four orders of magnitude slower. Classical industrial solvers such as Gurobi or CPLEX routinely solve mixed-integer quadratic programming (MIQP) instances with thousands of binary variables in seconds using branch-and-bound and cutting-plane algorithms.
+
+The value of this implementation lies in establishing a rigorous, reproducible, mathematically verified reference pipeline for constrained combinatorial optimization in Qiskit, demonstrating how quantum algorithms handle constraints, and evaluating the physical bottlenecks that must be overcome before quantum utility is achievable.
+
+\section{Physical NISQ Hardware Bottlenecks}
+Executing the Quantum Resource Optimizer on physical gate-model superconducting processors introduces severe physical noise sources absent in idealized statevector simulation \cite{preskill2018quantum, sachdeva2024quantum}:
+
+\subsection{Two-Qubit Gate Error Accumulation}
+On contemporary superconducting transmon processors (such as IBM Quantum Eagle and Heron chips), single-qubit gate fidelities exceed $99.9\%$, but two-qubit entangling CNOT/ECR gates suffer from error rates of $\epsilon_{\text{CX}} \approx 0.5\% - 1.0\%$.
+
+For an unconstrained graph with $N$ vertices, the number of two-qubit gates per QAOA layer is $\binom{N}{2} = \frac{N(N-1)}{2}$. For $N = 5$, each layer requires 10 entangling operations, meaning a $p=3$ circuit executes 30 two-qubit gates. In a first-order depolarizing noise model, circuit fidelity degrades exponentially:
+\begin{equation}
+\mathcal{F} \approx (1 - \epsilon_{\text{CX}})^{N_{\text{CX}}} \approx (1 - 0.008)^{30} \approx 78.5\%
+\end{equation}
+As $N$ scales to realistic portfolio sizes ($N = 50$), each layer requires $\binom{50}{2} = 1225$ two-qubit gates. At $p=3$, over 3600 CNOTs would be required, collapsing circuit fidelity to zero ($\mathcal{F} \ll 10^{-12}$) and rendering raw physical measurements indistinguishable from uniform white noise.
+
+\subsection{Decoherence \texorpdfstring{($T_1, T_2$)}{(T1, T2)} Constraints}
+Superconducting transmons possess finite energy relaxation times ($T_1 \sim 150 - 300\,\mu\text{s}$) and phase coherence times ($T_2 \sim 100 - 200\,\mu\text{s}$). A typical two-qubit cross-resonance gate requires $\sim 300 - 500\,\text{ns}$. A circuit with deep layers and sequential entangling operations quickly exhausts the coherence budget, causing the quantum register to decay toward a maximally mixed thermal state before measurement.
+
+\section{Lattice Connectivity and SWAP Network Overhead}
+A critical structural challenge in quantum portfolio optimization is graph density. Because every pair of assets shares a covariance value $\Sigma_{ij}$ and a quadratic budget penalty $2\lambda$, the Ising Cost Hamiltonian graph is a \textit{complete graph} ($K_N$):
+\begin{equation}
+\text{Degree}(v_i) = N - 1, \quad \forall i
+\end{equation}
+
+However, physical superconducting QPUs are constrained to planar 2D lattices with low qubit connectivity. IBM Quantum processors employ a \textit{heavy-hex} lattice architecture with node degrees strictly limited to 2 and 3.
+
+To execute two-qubit interactions between physically non-adjacent qubits on a heavy-hex chip, the quantum compiler must insert SWAP networks. Each logical two-qubit gate between distant qubits requires routing via intermediate SWAP gates, where each SWAP decomposes into 3 physical CNOT gates. Compiling a dense $K_N$ graph onto a heavy-hex topology multiplies the physical CNOT depth by an additional factor of $3\times$ to $5\times$, drastically accelerating decoherence and gate error accumulation.
+
+\section{Variational Optimization Landscapes: Barren Plateaus}
+The classical optimization of variational angles $(\vec{\gamma}, \vec{\beta})$ faces theoretical hurdles as instance sizes expand. McClean et al. \cite{mcclean2018barren} proved that in generic parameterized quantum circuits, the variance of the gradient of the expectation value vanishes exponentially in the number of qubits:
+\begin{equation}
+\text{Var}_{\vec{\theta}}\left[ \frac{\partial \langle \hat{H}_C \rangle}{\partial \theta_k} \right] \in \mathcal{O}\left( \frac{1}{2^N} \right)
+\end{equation}
+
+For large $N$, the optimization landscape becomes an exponentially flat ``barren plateau'' punctuated by infinitesimally narrow global minima basins. In the presence of hardware noise, this phenomenon is further exacerbated: noise-induced barren plateaus flatten the landscape regardless of circuit depth, trapping gradient-based and simplex-based classical optimizers like COBYLA in random local configurations.

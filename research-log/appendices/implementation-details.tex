@@ -1,0 +1,55 @@
+\chapter{Implementation Details and Code Excerpts}
+\label{app:implementation-details}
+
+\section{QUBO-to-Ising Hamiltonian Compilation}
+The algebraic transformation mapping the constrained Markowitz QUBO problem to an Ising Cost Hamiltonian operator represented as a Qiskit \texttt{SparsePauliOp} is implemented in the module \path{src/quantum_optimizer/hamiltonian.py}. Listing \ref{lst:hamiltonian_mapping} provides the core compilation routine.
+
+\lstinputlisting[
+    language=Python,
+    caption={QUBO to Ising Cost Hamiltonian mapping routine (\texttt{src/quantum\_optimizer/hamiltonian.py}).},
+    label={lst:hamiltonian_mapping},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    rulecolor=\color{black!30},
+    backgroundcolor=\color{black!3}
+]{code/hamiltonian_mapping.py}
+
+\section{Little-Endian Bitstring Decoding}
+Listing \ref{lst:endianness_decoding} documents the bitstring decoding logic that converts Qiskit's little-endian measurement keys ($|q_{N-1} \dots q_0\rangle$) into standard asset index vectors ($x_i$).
+
+\lstinputlisting[
+    language=Python,
+    caption={Bitstring decoding and candidate scoring (\texttt{src/quantum\_optimizer/qaoa\_solver.py}).},
+    label={lst:endianness_decoding},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    rulecolor=\color{black!30},
+    backgroundcolor=\color{black!3}
+]{code/endianness_decoding.py}
+
+\section{Reproducibility Protocol and CLI Commands}
+To reproduce the experimental results and execute the automated test suite from the repository root:
+
+\subsection{Running the Automated Test Suite}
+\begin{lstlisting}[language=bash, basicstyle=\ttfamily\small, frame=single]
+# Run the complete test suite
+pytest -v tests/
+\end{lstlisting}
+
+\subsection{Executing the Full Benchmark Pipeline}
+\begin{lstlisting}[language=bash, basicstyle=\ttfamily\small, frame=single]
+# Execute benchmark suite (N=5, B=2, shots=4096, seed=42)
+python src/main.py --mode benchmark --num-assets 5 --budget 2 --shots 4096 --seed 42
+
+# Execute depth scaling sweep (p=1, 2, 3)
+python src/main.py --mode sweep --num-assets 5 --budget 2 --shots 4096 --seed 42
+\end{lstlisting}
+
+\section{Environment and Model Assistance Disclosure}
+In compliance with academic transparency and the Qiskit Fall Fest 2026 hackathon guidelines, we disclose that the development of this codebase and research monograph was assisted by the Antigravity IDE agentic environment utilizing Google's Gemini 3.8 Flash High model. The model was employed for exploratory brainstorming, initial code templating, test generation, and documentation drafting under continuous human direction and rigorous empirical verification. All mathematical derivations, software algorithms, benchmark numbers, and critical analyses were verified against executable code and local files.

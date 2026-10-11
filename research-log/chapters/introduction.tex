@@ -1,0 +1,36 @@
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{The Global Clean Energy Allocation Dilemma}
+The decarbonization of global energy infrastructure represents one of the most capital-intensive challenges of the twenty-first century. National power grids and green investment funds must allocate billions of dollars across competing clean technology options, including utility-scale solar photovoltaics, offshore and onshore wind farms, battery energy storage systems (BESS), biomass cogeneration facilities, and geothermal power plants. In real-world resource allocation, capital budgets are finite: decision-makers must select a strict subset of $B$ flagship infrastructure assets from a candidate pool of $N$ opportunities ($B \ll N$).
+
+However, renewable generation is inherently non-deterministic. Meteorological intermittency---such as diurnal solar irradiance fluctuations, seasonal wind velocity variations, and thermal storage discharge dynamics---introduces correlated generation volatility across interconnected nodes. Optimizing this allocation therefore requires balancing expected energy yield against systemic portfolio risk, while enforcing a strict cardinality constraint on total funded assets.
+
+\section{Hackathon Alignment: Qiskit Fall Fest 2026 Track 2}
+The \textit{Qiskit Fall Fest 2026} Track 2 (\textit{Open-Domain Optimization \& Real-World Solvers}) challenges participants to identify a compelling real-world dilemma, translate it into a binary combinatorial model, and solve it using modern Qiskit tooling. In the official hackathon reference materials, Tirado \cite{tirado2026qaoa} articulated the fundamental motivation:
+\begin{quote}
+``The challenge centres on a portfolio-selection problem: from a universe of assets, choose a subset that maximizes expected return while penalizing risk, subject to a budget constraint... This problem is a natural fit for QAOA... but it adds the essential ingredient of a constraint, which you must fold into the encoding.''
+\end{quote}
+The \textbf{Quantum Resource Optimizer} project was engineered specifically to address this mandate. Rather than treating quantum optimization as an abstract theoretical exercise, we establish an end-to-end computational pipeline that models renewable asset selection under covariance risk, transforms the problem into a Quadratic Unconstrained Binary Optimization (QUBO) model, maps the problem to an Ising Hamiltonian, and solves it using the Quantum Approximate Optimization Algorithm (QAOA) on Qiskit 1.0+ and 2.0+ primitives.
+
+\section{Research Objectives and Scope}
+This monograph investigates four central research questions:
+\begin{enumerate}
+    \item \textbf{Mathematical Equivalence (RQ1):} Can a constrained Markowitz portfolio optimization problem be converted into an Ising Cost Hamiltonian such that the physical quantum expectation value identically matches the classical objective function across all $2^N$ basis states?
+    \item \textbf{Depth Scaling and Subspace Concentration (RQ2):} How does increasing the QAOA circuit depth parameter $p \in \{1, 2, 3\}$ affect the concentration of probability amplitude onto the valid budget subspace $\binom{N}{B}$ and the corresponding Feasibility Yield?
+    \item \textbf{Penalty Multiplier Sensitivity (RQ3):} What is the quantitative impact of the constraint penalty weight $\lambda$ on the classical optimizer's ability to locate the global optimum without suffering from either infeasible leakage ($\lambda \to 0$) or severe energy landscape distortion ($\lambda \gg 1$)?
+    \item \textbf{Algorithmic Benchmarking (RQ4):} How do the runtime, solution quality, and failure modes of QAOA compare against classical exact brute-force search and greedy heuristics?
+\end{enumerate}
+
+\section{Document Structure}
+The remainder of this report is organized as follows:
+\begin{itemize}
+    \item \textbf{Chapter \ref{chap:background}} reviews the foundational theory of Markowitz portfolio optimization, QUBO formulations, Ising spin glasses, and the QAOA ansatz.
+    \item \textbf{Chapter \ref{chap:problem-formulation}} details the mathematical model, the quadratic budget penalty formulation, and the affine transformation to Pauli-$Z$ operators.
+    \item \textbf{Chapter \ref{chap:methodology}} explains the hybrid variational optimization loop, Qiskit primitive architecture, and classical parameter tuning.
+    \item \textbf{Chapter \ref{chap:implementation}} describes the software architecture, modular Python package structure, little-endian bitstring decoding, and automated test suite.
+    \item \textbf{Chapter \ref{chap:experimental-setup}} outlines the experimental benchmark instance, execution environment, and evaluation metrics.
+    \item \textbf{Chapter \ref{chap:results-and-discussion}} presents empirical benchmarking data, depth scaling sweeps, penalty parameter sensitivity, and discussion of the generated figures.
+    \item \textbf{Chapter \ref{chap:limitations}} provides a candid scientific evaluation of NISQ hardware constraints, gate error accumulation, heavy-hex topology overhead, and barren plateaus.
+    \item \textbf{Chapter \ref{chap:conclusion}} summarizes our findings and outlines future research directions toward utility-scale quantum optimization.
+\end{itemize}

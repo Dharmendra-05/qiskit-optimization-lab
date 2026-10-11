@@ -1,0 +1,55 @@
+\chapter{Experimental Setup and Reproducibility Protocol}
+\label{chap:experimental-setup}
+
+\section{Benchmark Environment and Specifications}
+To ensure reproducibility, all experiments were conducted within an isolated virtual environment with locked dependency versions:
+\begin{itemize}
+    \item \textbf{Operating System:} Microsoft Windows (AMD64)
+    \item \textbf{Python Runtime:} Python 3.12.13
+    \item \textbf{Qiskit SDK:} Qiskit version 2.5.2
+    \item \textbf{Simulation Backend:} Qiskit Aer 0.17.2 with reference primitives (\texttt{StatevectorEstimator} and \texttt{StatevectorSampler})
+    \item \textbf{Scientific Stack:} NumPy 2.2.3, SciPy 1.18.1, Matplotlib 3.11.2, Rustworkx 0.18.1
+    \item \textbf{Git Provenance:} Commit \texttt{73c834927348f9ee606d04a06e0be5582d26e8aa}
+    \item \textbf{Artifact Path:} \path{outputs/runs/20261011_103427_qaoa_n5_seed42/experiment_metrics.json}
+\end{itemize}
+
+\section{Calibrated 5-Asset Renewable Portfolio Instance}
+The benchmark instance models a realistic municipal clean energy capital allocation dilemma. The candidate catalog consists of $N = 5$ renewable assets described in Table \ref{tab:asset_catalog}:
+\begin{itemize}
+    \item Asset 0: Utility Solar Farm A ($r_0 = 0.85$, $\Sigma_{00} = 0.165$)
+    \item Asset 1: Offshore Wind Array B ($r_1 = 0.92$, $\Sigma_{11} = 0.174$)
+    \item Asset 2: Lithium-Ion BESS C ($r_2 = 0.65$, $\Sigma_{22} = 0.188$)
+    \item Asset 3: Biomass Cogen Plant D ($r_3 = 0.70$, $\Sigma_{33} = 0.142$)
+    \item Asset 4: Geothermal Plant E ($r_4 = 0.88$, $\Sigma_{44} = 0.159$)
+\end{itemize}
+
+\input{tables/asset_catalog}
+
+The inter-asset covariance matrix $\Sigma$ was constructed via a positive semi-definite latent factor model with fixed random seed 42, reflecting realistic weather correlation: solar and wind exhibit moderate negative diurnal covariance, while battery storage provides low covariance across all assets.
+
+The instance parameters are configured as:
+\begin{itemize}
+    \item Total Assets: $N = 5$
+    \item Capital Budget: $B = 2$ projects (feasible subspace size $|\Omega_{\text{feasible}}| = \binom{5}{2} = 10$)
+    \item Risk-Aversion Factor: $q = 0.5$
+    \item Penalty Multiplier: $\lambda = 2.5$
+    \item Measurement Shots: $S = 4096$
+    \item Reproducibility Seed: 42
+\end{itemize}
+
+\section{Experimental Design and Parameter Sweeps}
+Two controlled experimental series were executed:
+\begin{enumerate}
+    \item \textbf{Circuit Depth Scaling ($p$-Sweep):}
+    QAOA was evaluated across depths $p \in \{1, 2, 3\}$. For each depth, the number of variational parameters scales as $2p \in \{2, 4, 6\}$. We tracked convergence trajectory, optimal utility, approximation ratio, feasibility yield, and total execution time.
+    
+    \item \textbf{Penalty Weight Sensitivity ($\lambda$-Sweep):}
+    Holding depth fixed at $p = 1$, the penalty multiplier was varied over seven values:
+    \begin{equation}
+    \lambda \in \{0.5, 1.0, 1.5, 2.0, 2.5, 3.5, 5.0\}
+    \end{equation}
+    This sweep evaluates the transition between under-penalization (infeasible constraint leakage) and over-penalization (local minimum trapping).
+\end{enumerate}
+
+\section{Verification of Hamiltonian Ground-State Equivalence}
+Prior to executing QAOA, the compiled \texttt{SparsePauliOp} was formally validated against the classical cost function across all $2^5 = 32$ computational basis states. The diagnostic confirmed that the maximum energy deviation $|\langle x | \hat{H}_C | x \rangle - C(x)| < 10^{-12}$, confirming analytical equivalence.
