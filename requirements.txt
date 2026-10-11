@@ -1,0 +1,10 @@
+# Core dependencies for Qiskit Fall Fest 2026 Hackathon (Track 2 Optimization)
+qiskit>=1.0.0
+qiskit-aer>=0.14.0
+numpy>=1.26.0
+matplotlib>=3.8.0
+rustworkx>=0.14.0
+scipy>=1.12.0
+jupyter>=1.0.0
+pytest>=8.0.0
+pylatexenc>=2.11
