@@ -35,7 +35,7 @@
   - Populated standardized submission `README.md` strictly following hackathon template headings (Sections 1 through 7).
   - Authored `docs/architecture.md`, `docs/algorithm.md`, `docs/experiment-log.md`, `docs/limitations.md`.
   - Authored video presentation recording script in `docs/demo-script.md` (8-minute target, live demo at 02:45).
-  - Authored 9-chapter LaTeX research journal in `research-log/` and compiled 12-page PDF report `research-log/main.tex`.
+  - Authored modular 9-chapter academic LaTeX research monograph under `research-log/` and compiled 36-page PDF report `research-log/main.pdf` using XeLaTeX with verified Times New Roman typography.
   - Updated operational logs (`prompts.md`, `model-usage.md`, `change-log.md`, `experiment-log.md`).
 - [x] **Phase G: Final Acceptance Review & Git State Preparation**
   - Verified no secret credentials or API tokens exist in repository.
@@ -49,7 +49,7 @@
 - **Ground-State Equivalence:** Passed ($\Delta E < 10^{-12}$).
 - **CLI Execution:** `python src/main.py --num-assets 5 --budget 2 --p 1 --shots 2048` passed in 1.39s (Approximation Ratio: 1.0000, Feasibility Yield: 43.02%).
 - **Jupyter Notebook:** `notebooks/solution.ipynb` executed end-to-end with all cells evaluated.
-- **LaTeX Monograph:** `research-log/main.pdf` compiled cleanly (12 pages).
+- **LaTeX Monograph:** `research-log/main.pdf` compiled cleanly (36 pages, Times New Roman verified via `pdffonts`).
 
 ---
 

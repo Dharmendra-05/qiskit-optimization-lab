@@ -129,8 +129,8 @@ reviewed changes (5).
    accurately, and separate implemented functionality from planned work. Keep
    `PROJECT_STATUS.md` current with verified progress and remaining blockers.
 5. **`ai-commit`** — Defaults to **plan-only**: inspects `git status` and diffs,
-   checks for secrets, unrelated files, and inappropriate generated artifacts,
-   and writes a reviewable commit plan under `research-log/logs/commit-plans/`.
+   and writes a reviewable commit plan under `research-log/logs/commit-plans/`
+   (which is automatically deleted after commit execution to keep the repository clean).
    It **must never commit or push without explicit user authorization**. Exiting
    plan-only mode requires the exact trigger `COMMIT-EXECUTE-AUTHORIZED`;
    reconstructing genuinely past uncommitted work requires

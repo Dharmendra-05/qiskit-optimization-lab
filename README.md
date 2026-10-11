@@ -21,7 +21,7 @@
   The Quantum Resource Optimizer solves the critical real-world challenge of capital allocation across competing clean energy infrastructure projects under strict budgetary and risk constraints. We translate the Markowitz mean-variance portfolio selection problem into a Quadratic Unconstrained Binary Optimization (QUBO) model with an exact quadratic budget penalty. Using modern Qiskit 1.0+ and 2.0+ primitives (`QAOAAnsatz`, `StatevectorEstimator`, and `StatevectorSampler`), the system searches the combinatorial space of renewable energy assets (Solar PV, Offshore Wind, Battery Storage, Biomass, Geothermal) to identify the optimal budget-compliant portfolio.
 
 * **Why this problem / game?**  
-  As the global clean-energy transition accelerates, energy investment authorities face the multi-billion dollar dilemma of selecting which renewable projects to fund from a large catalog under fixed capital expenditure limits. Renewable assets suffer from weather intermittency and generation volatility that must be balanced through covariance modeling. This problem is of paramount societal importance, directly addresses the official Track 2 portfolio-selection challenge from the hackathon reference materials, and provides a rigorous, pedagogical vehicle to study how quantum algorithms handle hard combinatorial constraints through variational penalty multipliers.
+  As the global clean-energy transition accelerates, energy investment authorities face the multi-billion dollar dilemma of selecting which renewable projects to fund from a large catalog under fixed capital expenditure limits. Renewable assets suffer from weather intermittency and generation volatility that must be balanced through covariance modeling. This problem directly addresses the official Track 2 portfolio-selection challenge from the hackathon reference materials, providing a rigorous, pedagogical vehicle to study how quantum algorithms handle hard combinatorial constraints through variational penalty multipliers.
 
 ---
 
@@ -109,6 +109,16 @@ quantum-resource-optimizer/
 │   ├── experiment-log.md   # Systematic run logs, CSV data, and depth sweeps
 │   ├── limitations.md      # Scientific reflection on NISQ noise & scaling
 │   └── demo-script.md      # 8-minute presentation video recording script
+├── research-log/           # 36-page modular academic LaTeX research monograph
+│   ├── main.tex            # Master XeLaTeX document (Times New Roman typography)
+│   ├── README.md           # Reproducible build instructions (xelatex + bibtex)
+│   ├── frontmatter/        # Title page and abstract
+│   ├── chapters/           # 9 academic chapters (background, math, results, NISQ realities)
+│   ├── appendices/         # Verified code excerpts and reproducibility commands
+│   ├── tables/             # LaTeX tables (asset catalog, benchmark summary, sweeps)
+│   ├── code/               # Exact Python code listings for Hamiltonian & decoding
+│   ├── figures/            # Vector and high-resolution monograph figures
+│   └── references/         # Primary literature BibTeX database (13 verified entries)
 ├── outputs/                # Experiment artifacts
 │   ├── plots/              # High-resolution benchmark figures
 │   ├── runs/               # Timestamped run logs (JSON metrics + CSV summaries)
@@ -162,7 +172,7 @@ quantum-resource-optimizer/
   3. **Hamiltonian Synthesis & Verification:** The QUBO problem is converted into a 5-qubit `SparsePauliOp` Cost Hamiltonian. An automated mathematical proof verifies that $\langle x | \hat{H}_C | x \rangle == C(x)$ with zero error tolerance.
   4. **QAOA Variational Optimization:** `QAOAAnsatz` is instantiated with depth $p=1$. Classical COBYLA minimizes expected energy across $\sim 50$ iterations via `StatevectorEstimator`.
   5. **Sampling & Little-Endian Readout:** 2048 measurement shots are acquired via `StatevectorSampler`. Bitstrings are reversed from Qiskit's little-endian convention and evaluated for feasibility ($\sum x_i == 2$).
-  6. **Candidate Output:** QAOA returns `[0, 1, 0, 0, 1]`, achieving an **Approximation Ratio of 1.0000** and a **Feasibility Yield of 43.0%**.
+  6. **Candidate Output:** QAOA returns `[0, 1, 0, 0, 1]`, achieving an **Approximation Ratio of 1.0000** and a **Feasibility Yield of 43.0%** (for this 2048-shot interactive CLI execution; 41.65% under the 4096-shot systematic benchmark suite in Section 5).
 
 * **Key Screenshots / Terminal Output:**  
   ```text

@@ -10,6 +10,7 @@
 
 ## Team Information
 - **Participant / Team Lead:** Dharmendra P.
+- **Email:** dharmendrapradhan737@gmail.com
 - **GitHub Username:** `@Dharmendra-05`
 - **Participation Type:** Individual Project Submission
 
@@ -19,6 +20,7 @@
 - **Quantum Simulator:** Qiskit Aer (`qiskit-aer>=0.14.0`) and Qiskit Reference Primitives (`StatevectorEstimator`, `StatevectorSampler`)
 - **Scientific Computing Stack:** NumPy >= 1.26.0, SciPy >= 1.12.0, Rustworkx >= 0.14.0, Matplotlib >= 3.8.0
 - **Testing Framework:** Pytest >= 8.0.0
+- **Primary Research Report:** 36-page modular academic LaTeX monograph (`research-log/main.pdf`) compiled with XeLaTeX and Times New Roman typography
 
 ## AI Model & Tooling Provenance
 - **Primary Architecture, Implementation, Research & Documentation Agent:** Gemini 3.8 Flash High (in Google Antigravity IDE)
