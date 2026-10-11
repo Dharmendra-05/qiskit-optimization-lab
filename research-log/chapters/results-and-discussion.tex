@@ -11,19 +11,24 @@ We evaluated the constrained green energy portfolio optimization problem across 
 \subsection{Why Classical Greedy Fails: Covariance Coupling Blindness}
 As recorded in Table \ref{tab:benchmark_summary}, the classical greedy heuristic fails to reach the true global optimum, achieving an Approximation Ratio of $\alpha = 0.9649$ (utility 1.6445 vs. optimal 1.7044).
 
-The mechanism behind this failure is mathematically instructive. The greedy heuristic sorts assets based strictly on individual net utility:
+The mechanism behind this failure is mathematically instructive. In accordance with standard financial heuristic allocation, the greedy solver ranks candidate assets by their individual return-to-volatility (Sharpe-like) ratio:
 \begin{equation}
-u_i = r_i - \frac{q}{2} \Sigma_{ii}
+S_i = \frac{r_i}{\sqrt{\Sigma_{ii}}}
 \end{equation}
-Evaluating individual scores for candidate assets:
+Evaluating the individual risk-adjusted scores using the diagonal self-variances of the calibrated covariance matrix:
 \begin{align*}
-u_0 \text{ (Solar Farm A)} &= 0.85 - 0.25(0.165) = 0.8088 \\
-u_1 \text{ (Offshore Wind B)} &= 0.92 - 0.25(0.174) = 0.8765 \\
-u_4 \text{ (Geothermal Plant E)} &= 0.88 - 0.25(0.159) = 0.8403
+S_0 \text{ (Utility Solar Farm A)} &= \frac{0.8500}{\sqrt{0.1601}} = 2.1243 \\
+S_4 \text{ (Geothermal Plant E)} &= \frac{0.8800}{\sqrt{0.1981}} = 1.9771 \\
+S_1 \text{ (Offshore Wind Array B)} &= \frac{0.9200}{\sqrt{0.2393}} = 1.8806 \\
+S_2 \text{ (Lithium-Ion BESS C)} &= \frac{0.6500}{\sqrt{0.1275}} = 1.8200 \\
+S_3 \text{ (Biomass Cogen Plant D)} &= \frac{0.7000}{\sqrt{0.2238}} = 1.4796
 \end{align*}
-Sorting descending gives $u_1 > u_4 > u_0$. For budget $B=2$, greedy selects Offshore Wind ($u_1$) and Geothermal ($u_4$), or when considering marginal additions from Solar, is biased toward standalone returns. More crucially, in correlated generation networks where asset pairs exhibit favorable negative cross-covariance ($\Sigma_{ij} < 0$), the pairwise interaction term $-q \Sigma_{ij} x_i x_j$ can boost portfolio utility above the sum of isolated returns. Greedy heuristics cannot foresee these multi-asset synergies without quadratic backtracking.
+Sorting descending gives $S_0 > S_4 > S_1 > S_2 > S_3$. For budget $B=2$, the greedy heuristic selects the top two assets: Utility Solar Farm A ($i=0$) and Geothermal Plant E ($i=4$), yielding assignment $\texttt{[1, 0, 0, 0, 1]}$ with total portfolio utility $\mathcal{U} = 1.6445$.
 
-In contrast, QAOA encodes the full covariance matrix into the two-qubit exchange coupling terms $J_{ij} Z_i Z_j$. The quantum entangling gates naturally explore pairwise correlations, driving probability amplitude toward the true synergy-maximizing assignment $\texttt{[0, 1, 0, 0, 1]}$ and achieving $\alpha = 1.0000$.
+Why does greedy fail to reach the optimum ($\mathcal{U} = 1.7044$)?
+Because the heuristic evaluates each asset's volatility $\sqrt{\Sigma_{ii}}$ in complete isolation. While Solar Farm A has lower individual variance than Offshore Wind Array B ($\Sigma_{00} = 0.1601$ vs. $\Sigma_{11} = 0.2393$), Offshore Wind possesses both a higher expected return ($0.9200$ vs. $0.8500$) and a strong risk-hedging negative cross-covariance with Geothermal Plant E ($\Sigma_{14} = -0.0275$). When combined, Wind and Geothermal achieve an optimal Markowitz utility of $\mathcal{U} = 1.7044$. Standalone greedy heuristics cannot foresee these multi-asset pairwise synergies without quadratic backtracking.
+
+Even under an alternative standalone net utility ranking $u_i = r_i - \frac{q}{2}\Sigma_{ii}$, isolated single-asset metrics fundamentally ignore off-diagonal covariance interaction terms $\Sigma_{ij}$ ($i \neq j$). In contrast, QAOA encodes the full $N \times N$ covariance matrix directly into two-qubit exchange coupling terms $J_{ij} Z_i Z_j$. The quantum entangling gates explore the correlated landscape holistically, driving probability amplitude toward the true synergy-maximizing assignment $\texttt{[0, 1, 0, 0, 1]}$ and achieving $\alpha = 1.0000$.
 
 \subsection{Convergence Trajectory Under COBYLA}
 Figure \ref{fig:convergence} displays the convergence trajectory of the energy expectation value $\langle \hat{H}_C \rangle$ as a function of classical optimizer iterations during the $p=1$ QAOA run.
@@ -43,7 +48,7 @@ Figure \ref{fig:distribution} illustrates the measured probability distribution 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{figures/solution_distribution.png}
-    \caption{Computational basis measurement probability distribution over 4096 shots for $p=1$ QAOA, highlighting the dominance of the global optimum state \texttt{01001}.}
+    \caption{Computational basis measurement probability distribution over 4096 shots for $p=1$ QAOA, highlighting the dominance of the global optimum state $\texttt{[0, 1, 0, 0, 1]}$ (displayed as asset-indexed bitstring \texttt{01001}, corresponding to Qiskit basis state $|10010\rangle$).}
     \label{fig:distribution}
 \end{figure}
 
@@ -95,8 +100,8 @@ Three distinct operational regimes emerge from the data:
     \item \textbf{Under-Penalized Regime ($\lambda \le 1.0$):}
     When $\lambda$ is too small, the penalty fails to adequately overcome the utility of adding extra assets. The energy cost of violating the budget constraint is insufficient, resulting in significant amplitude leakage into infeasible bitstrings ($\sum_i x_i = 3$) and driving the feasibility yield down to $16.02\%$ at $\lambda = 1.0$.
     
-    \item \textbf{Calibrated Optimal Regime ($\lambda \approx 2.5$):}
-    At $\lambda = 2.5$, the penalty cost is precisely calibrated to exceed the marginal utility of any individual asset without distorting the internal relative energy differences between feasible candidates. The feasibility yield peaks at $42.58\%$, and the global optimum is reliably recovered.
+    \item \textbf{Empirically Best-Performing Regime ($\lambda = 2.5$):}
+    Among the seven tested candidate values, $\lambda = 2.5$ provides the most balanced penalty trade-off: it sufficiently penalizes constraint violations without excessively distorting the relative energy differences among feasible candidates. The feasibility yield peaks at $42.58\%$, and the global optimum is reliably recovered.
     
     \item \textbf{Over-Penalized Regime ($\lambda \ge 5.0$):}
     When $\lambda$ is excessively large, the penalty term dominates all physical utility contributions ($Q_{ij} \sim 2\lambda$). The energy landscape develops steep, narrow valleys around all feasible states, but the relative utility differences among feasible states become minute perturbations. Consequently, the classical optimizer risks becoming trapped in suboptimal feasible basins, as observed where the yield drops to $22.51\%$.
