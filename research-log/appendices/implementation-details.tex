@@ -42,13 +42,13 @@ To reproduce the experimental results and execute the automated test suite from 
 pytest -v tests/
 \end{lstlisting}
 
-\subsection{Executing the Full Benchmark Pipeline}
+\subsection{Executing the Optimization Pipeline and Benchmarks}
 \begin{lstlisting}[language=bash, basicstyle=\ttfamily\small, frame=single]
-# Execute benchmark suite (N=5, B=2, shots=4096, seed=42)
-python src/main.py --mode benchmark --num-assets 5 --budget 2 --shots 4096 --seed 42
+# Execute standalone CLI optimization (N=5, B=2, p=1, shots=4096, seed=42)
+python src/main.py --num-assets 5 --budget 2 --p 1 --shots 4096 --seed 42 --save-plots
 
-# Execute depth scaling sweep (p=1, 2, 3)
-python src/main.py --mode sweep --num-assets 5 --budget 2 --shots 4096 --seed 42
+# Execute the comprehensive benchmark suite (depth scaling & penalty sweeps)
+python -m quantum_optimizer.experiment_runner
 \end{lstlisting}
 
 \section{Environment and Model Assistance Disclosure}
