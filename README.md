@@ -11,7 +11,7 @@
 ### Team Members (Max 4 members)
 | Name | Email | GitHub Username |
 | :--- | :--- | :--- |
-| Dharmendra P. | dharmendra.personal@gmail.com | `@Dharmendra-05` |
+| Dharmendra P. | dharmendrapradhan737@gmail.com | `@Dharmendra-05` |
 
 ---
 
