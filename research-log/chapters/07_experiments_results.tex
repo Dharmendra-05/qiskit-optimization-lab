@@ -1,0 +1,29 @@
+\section{Experimental Results and Comparative Analysis}
+
+\subsection{Benchmark Configuration}
+All experiments were evaluated on a calibrated 5-asset renewable portfolio instance with budget $B=2$, risk factor $q=0.5$, and penalty multiplier $\lambda=2.5$ across 4096 measurement shots using fixed seed 42.
+
+\subsection{Performance Summary}
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccccr}
+\toprule
+\textbf{Solver} & \textbf{Selected Portfolio} & \textbf{Utility $\mathcal{U}(x)$} & \textbf{Approx. Ratio ($\alpha$)} & \textbf{Feasibility Yield} & \textbf{Runtime} \\
+\midrule
+Exact Brute-Force & \texttt{[0, 1, 0, 0, 1]} & \textbf{1.7044} & \textbf{1.0000} & 100.0\% & 0.8 ms \\
+Greedy Heuristic  & \texttt{[1, 0, 0, 0, 1]} & 1.6445          & 0.9649          & 100.0\% & 0.1 ms \\
+QAOA ($p=1$)      & \texttt{[0, 1, 0, 0, 1]} & \textbf{1.7044} & \textbf{1.0000} & \textbf{41.65\%} & 1.42 s \\
+QAOA ($p=2$)      & \texttt{[0, 1, 0, 0, 1]} & \textbf{1.7044} & \textbf{1.0000} & \textbf{77.00\%} & 8.38 s \\
+QAOA ($p=3$)      & \texttt{[0, 1, 0, 0, 1]} & \textbf{1.7044} & \textbf{1.0000} & \textbf{77.05\%} & 9.77 s \\
+\bottomrule
+\end{tabular}
+\caption{Comparative performance across classical and quantum solvers.}
+\end{table}
+
+\subsection{Key Empirical Discoveries}
+\begin{itemize}
+    \item \textbf{Constructive Interference with Depth:} Increasing QAOA depth from $p=1$ to $p=2$ increases the Feasibility Yield from $41.65\%$ to $77.00\%$, demonstrating that alternating unitaries effectively concentrate quantum probability mass onto the valid budget subspace $\binom{5}{2}$.
+    \item \textbf{Classical Greedy Failure:} The greedy heuristic fails to reach the global optimum ($\alpha = 0.9649$) because it ignores pairwise covariance interactions between assets. In contrast, QAOA accounts for full two-qubit covariance entanglement and recovers the exact global optimum ($\alpha = 1.0000$).
+    \item \textbf{Penalty Multiplier Dynamics:} Sweeping $\lambda \in [0.5, 5.0]$ reveals that setting $\lambda < 1.0$ fails to sufficiently suppress infeasible states (feasibility yield $< 35\%$), whereas excessive penalties ($\lambda = 5.0$) distort the energy landscape, trapping the optimizer in suboptimal local basins ($\alpha = 0.9649$). The calibrated value $\lambda = 2.5$ provides the optimal balance.
+\end{itemize}

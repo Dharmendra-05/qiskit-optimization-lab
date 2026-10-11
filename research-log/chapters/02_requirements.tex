@@ -1,0 +1,33 @@
+\section{Official Requirements and Traceability}
+
+\subsection{Evaluation Criteria}
+Per the official Hackathon Guide (\texttt{HACKATHON\_GUIDE.md}), projects are evaluated on four key pillars:
+\begin{enumerate}
+    \item \textbf{Quantum Rigor \& Authenticity:} Genuine leverage of quantum superposition, entanglement, and interference via Qiskit circuits rather than classical random numbers.
+    \item \textbf{Working Implementation \& Live Demo:} Fully functioning, reproducible prototype with demonstrable live execution in under 10 minutes.
+    \item \textbf{Problem Formulation \& Originality:} Going beyond textbook Max-Cut to solve a constrained, real-world dilemma.
+    \item \textbf{Presentation Clarity \& Critical Understanding:} Candid scientific reflection on physical quantum noise, hardware constraints, and NISQ limits.
+\end{enumerate}
+
+\subsection{Requirements Traceability Table}
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lp{5.5cm}p{4cm}c}
+\toprule
+\textbf{Requirement ID} & \textbf{Official Specification} & \textbf{Implementation} & \textbf{Status} \\
+\midrule
+REQ-01 & Formulate real-world dilemma as binary QUBO & Green energy portfolio with budget & Verified \\
+REQ-02 & Qiskit must power quantum core & \texttt{QAOAAnsatz}, \texttt{SparsePauliOp} & Verified \\
+REQ-03 & Preserve official template README structure & Sections 1--7 preserved verbatim & Verified \\
+REQ-04 & Commit audit strictly within 24h window & Commit timestamps logged & Verified \\
+REQ-05 & Runnable notebook with outputs displayed & \texttt{notebooks/solution.ipynb} executed & Verified \\
+REQ-06 & Compare against classical baselines & Brute-force ($2^N$) and Greedy solver & Verified \\
+REQ-07 & Evaluate Approximation Ratio \& Feasibility Yield & Metric functions in \texttt{qaoa\_solver.py} & Verified \\
+REQ-08 & Demonstration video script ($\le 10$ mins) & Timestamped script in \texttt{docs/demo-script.md} & Verified \\
+REQ-09 & Local simulation permitted & Statevector simulator used & Verified \\
+REQ-10 & No secret credentials committed & Zero API keys in repository & Verified \\
+\bottomrule
+\end{tabular}
+\caption{Requirements traceability matrix.}
+\end{table}

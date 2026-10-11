@@ -1,0 +1,51 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{cite}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\title{\textbf{Quantum Resource Optimizer: Constrained Green Energy Asset Allocation via QAOA}\\[0.5em]
+\large Research Journal \& Technical Monograph --- Qiskit Fall Fest 2026 (Track 2)}
+\author{\textbf{Dharmendra P.}\\
+Indian Institute of Information Technology Kottayam Quantum Hackathon}
+\date{October 11, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Combinatorial resource allocation under capital budget and risk constraints is a foundational dilemma across sustainable energy systems. This report chronicles the complete research, mathematical formulation, implementation, benchmarking, and critical assessment of the \textbf{Quantum Resource Optimizer}, developed for the Qiskit Fall Fest 2026 Track 2 Optimization hackathon. We map the constrained Markowitz mean-variance portfolio selection problem into a Quadratic Unconstrained Binary Optimization (QUBO) model with an exact quadratic budget penalty. Using modern Qiskit 1.0+ and 2.0+ primitives (\texttt{QAOAAnsatz}, \texttt{StatevectorEstimator}, and \texttt{StatevectorSampler}), we synthesize a diagonal Ising Cost Hamiltonian and execute the Quantum Approximate Optimization Algorithm (QAOA). We benchmark the quantum solver against exact brute-force search and classical greedy heuristics. Our empirical results demonstrate an Approximation Ratio of $1.0000$ recovering the global optimum across all depths, and show that increasing QAOA circuit depth from $p=1$ to $p=2$ increases the Feasibility Yield from $41.65\%$ to $77.00\%$. Finally, we provide a candid scientific assessment of physical NISQ hardware bottlenecks, including gate error accumulation, heavy-hex SWAP routing overhead, and barren plateaus.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\include{chapters/01_project_charter}
+\include{chapters/02_requirements}
+\include{chapters/03_environment_model_usage}
+\include{chapters/04_architecture}
+\include{chapters/05_mathematical_formulation}
+\include{chapters/06_implementation_history}
+\include{chapters/07_experiments_results}
+\include{chapters/08_decisions_changes}
+\include{chapters/09_limitations_conclusion}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

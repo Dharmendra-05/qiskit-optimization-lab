@@ -1,0 +1,22 @@
+\section{Software Architecture and System Design}
+
+\subsection{Modular Package Structure}
+The codebase is structured under \texttt{src/quantum\_optimizer/} to ensure separation of concerns:
+\begin{itemize}
+    \item \texttt{problem.py}: Encapsulates asset attributes and mathematical validation rules.
+    \item \texttt{classical\_solvers.py}: Provides ground truth exact brute force and classical greedy heuristic baselines.
+    \item \texttt{hamiltonian.py}: Implements the affine Ising mapping and verifies Hamiltonian ground-state equivalence.
+    \item \texttt{qaoa\_solver.py}: Orchestrates Qiskit 1.0+/2.0+ primitives (\texttt{QAOAAnsatz}, \texttt{StatevectorEstimator}, and \texttt{StatevectorSampler}).
+    \item \texttt{experiment\_runner.py}: Automates multi-parameter sweeps and records metadata.
+    \item \texttt{visualization.py}: Generates publication-quality convergence, distribution, and scaling plots.
+\end{itemize}
+
+\subsection{Data Pipeline and Execution Flow}
+\begin{enumerate}
+    \item The client initiates an optimization job via the CLI (\texttt{src/main.py}) or the Jupyter notebook (\texttt{notebooks/solution.ipynb}).
+    \item A \texttt{ProblemInstance} is populated and validated.
+    \item The \texttt{BruteForceSolver} evaluates all $2^N$ bitstrings to determine the provable optimum.
+    \item The \texttt{build\_cost\_hamiltonian} function constructs a \texttt{SparsePauliOp} and mathematically verifies that $\langle x | \hat{H}_C | x \rangle == C(x)$.
+    \item The \texttt{QAOASolver} executes the hybrid loop: COBYLA tunes the variational parameters $(\vec{\gamma}, \vec{\beta})$ using \texttt{StatevectorEstimator}, followed by computational basis sampling with \texttt{StatevectorSampler}.
+    \item Measurement bitstrings are decoded from Qiskit's little-endian format and scored for feasibility and utility.
+\end{enumerate}

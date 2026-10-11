@@ -1,0 +1,23 @@
+\section{Architectural Decisions and Changelog}
+
+\subsection{Key Design Decisions}
+\begin{enumerate}
+    \item \textbf{Decision 1: Selection of Constrained Portfolio Optimization over Max-Cut.}
+    \begin{itemize}
+        \item \textit{Context:} Standard hackathon tutorials focus on unconstrained Max-Cut.
+        \item \textit{Rationale:} The official reference materials explicitly challenged participants to explore portfolio selection with constraints. Incorporating a quadratic penalty allowed us to investigate the critical relationship between penalty weight $\lambda$, circuit depth $p$, and feasibility yield.
+        \item \textit{Consequences:} Added complexity in Hamiltonian derivation, but provided far superior alignment with judging criteria.
+    \end{itemize}
+    \item \textbf{Decision 2: Local Statevector Simulation over Remote IBM Quantum Hardware.}
+    \begin{itemize}
+        \item \textit{Context:} Hackathon participants may choose between cloud backends or local simulators.
+        \item \textit{Rationale:} Remote queues can introduce hours of latency, and NISQ hardware noise on 5-qubit all-to-all dense graphs corrupts variational angle discovery. Local statevector simulation provides instant, deterministic, and reproducible evaluation without secret API keys.
+        \item \textit{Consequences:} Fast, 100\% reproducible results with zero external dependencies.
+    \end{itemize}
+    \item \textbf{Decision 3: Modern Qiskit 1.0+/2.0+ Primitives Architecture.}
+    \begin{itemize}
+        \item \textit{Context:} Legacy Qiskit tutorials utilize deprecated \texttt{qiskit.algorithms} classes.
+        \item \textit{Rationale:} Adopted \texttt{QAOAAnsatz}, \texttt{SparsePauliOp}, \texttt{StatevectorEstimator}, and \texttt{StatevectorSampler} directly, ensuring forward compatibility with Qiskit 2.x.
+        \item \textit{Consequences:} Clean, modern codebase with zero dependency on deprecated modules.
+    \end{itemize}
+\end{enumerate}

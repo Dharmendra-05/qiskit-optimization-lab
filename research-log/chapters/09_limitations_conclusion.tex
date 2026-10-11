@@ -1,0 +1,21 @@
+\section{Critical Limitations and Conclusion}
+
+\subsection{Candid Scientific Assessment of Limitations}
+Maintaining scientific integrity requires stating what current quantum optimization results prove and what they do not prove:
+\begin{itemize}
+    \item \textbf{No Demonstration of Quantum Advantage:} Solving an $N=5$ combinatorial problem classically via brute force requires only 0.8 milliseconds. Simulating the same problem quantumly on a classical computer requires 1.4 seconds. This demonstration proves algorithmic correctness and educational understanding, not quantum speedup.
+    \item \textbf{Physical NISQ Noise:} On actual superconducting hardware, two-qubit CNOT gate error rates ($\sim 0.5\%-1.0\%$) and finite coherence times ($T_1, T_2 \sim 200\,\mu\text{s}$) degrade the fidelity of deep circuits ($p \ge 3$), washing out the probability peaks observed in noiseless statevector simulations.
+    \item \textbf{SWAP Network Overhead on Heavy-Hex Lattices:} The dense covariance coupling between energy assets requires all-to-all qubit interactions. Physical IBM Quantum chips feature sparse heavy-hex connectivity, requiring the insertion of SWAP networks that multiply physical CNOT depth by $3\times$ to $5\times$.
+    \item \textbf{Barren Plateaus in Variational Landscapes:} As problem instances scale ($N > 20$), gradients of the variational expectation value vanish exponentially in $N$, impeding gradient-free classical optimizers.
+\end{itemize}
+
+\subsection{Future Research Directions}
+To achieve industrial utility on gate-model quantum hardware:
+\begin{enumerate}
+    \item \textbf{Constraint-Preserving XY Mixers:} Replace transverse $X$ mixers with $XY$ mixers ($\sum X_i X_j + Y_i Y_j$) that commute with the budget operator $\sum Z_i$, restricting state evolution strictly to the feasible subspace $\binom{N}{B}$ and achieving 100\% feasibility yield by design.
+    \item \textbf{Quantum Error Mitigation (QEM):} Integrate zero-noise extrapolation (ZNE) and dynamical decoupling (DD) using Qiskit Runtime resilience levels.
+    \item \textbf{Hardware-Aware Transpilation:} Implement commutativity-aware gate routing to synthesize commuting $ZZ$ rotations along linear SWAP chains.
+\end{enumerate}
+
+\subsection{Conclusion}
+The Quantum Resource Optimizer provides a complete, mathematically rigorous, reproducible, and verifiable submission for Qiskit Fall Fest 2026 Track 2. By formulating the green energy resource allocation dilemma as a constrained QUBO and solving it via QAOA, we demonstrate how quantum algorithms navigate hard constraints, achieve provable ground-state equivalence, and pave the way toward utility-scale quantum optimization.

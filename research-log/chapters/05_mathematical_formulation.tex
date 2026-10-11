@@ -1,0 +1,41 @@
+\section{Mathematical Formulation and Ising Mapping}
+
+\subsection{Constrained Optimization Model}
+Let $N$ denote candidate clean energy initiatives. We define binary decision variables $x = (x_0, \dots, x_{N-1})^T \in \{0, 1\}^N$, where $x_i = 1$ indicates project funding.
+The constrained Markowitz problem seeks to maximize:
+\begin{equation}
+\mathcal{U}(x) = \sum_{i=0}^{N-1} r_i x_i - \frac{q}{2} \sum_{i=0}^{N-1}\sum_{j=0}^{N-1} \Sigma_{ij} x_i x_j
+\end{equation}
+subject to the exact budget constraint:
+\begin{equation}
+\sum_{i=0}^{N-1} x_i = B
+\end{equation}
+where $r_i$ is expected clean energy generation return, $\Sigma \in \mathbb{R}^{N \times N}$ is the intermittency covariance matrix, $q \ge 0$ is risk aversion, and $B \in \{1, \dots, N-1\}$ is the budget.
+
+\subsection{QUBO Transformation}
+We convert the constrained problem into an unconstrained minimization problem with penalty weight $\lambda > 0$:
+\begin{equation}
+C(x) = -\mathcal{U}(x) + \lambda \left(\sum_{i=0}^{N-1} x_i - B\right)^2
+\end{equation}
+Expanding the quadratic constraint and utilizing the idempotency property of binary variables $x_i^2 = x_i$:
+\begin{equation}
+\left(\sum_{i=0}^{N-1} x_i - B\right)^2 = (1 - 2B)\sum_{i=0}^{N-1} x_i + 2 \sum_{i < j} x_i x_j + B^2
+\end{equation}
+Grouping linear and pairwise terms yields the standard QUBO form:
+\begin{equation}
+C(x) = \sum_{i < j} Q_{ij} x_i x_j + \sum_{i=0}^{N-1} Q_{ii} x_i + \lambda B^2
+\end{equation}
+where $Q_{ij} = q \Sigma_{ij} + 2\lambda$ for $i < j$, and $Q_{ii} = -r_i + \frac{q}{2}\Sigma_{ii} + \lambda(1 - 2B)$.
+
+\subsection{Affine Spin Mapping to Pauli-$Z$}
+Substituting binary variables with Pauli-$Z$ spin operators via $x_i = \frac{I - Z_i}{2}$:
+\begin{align}
+x_i &\to \frac{1}{2}I - \frac{1}{2}Z_i \\
+x_i x_j &\to \frac{1}{4}(I - Z_i - Z_j + Z_i Z_j)
+\end{align}
+This generates the diagonal Cost Hamiltonian:
+\begin{equation}
+\hat{H}_C = \sum_{i < j} J_{ij} Z_i Z_j + \sum_{i=0}^{N-1} h_i Z_i + c_0 \cdot I
+\end{equation}
+with coupling coefficients $J_{ij} = \frac{Q_{ij}}{4}$, local fields $h_i = -\frac{Q_{ii}}{2} - \sum_{j \neq i} \frac{Q_{\min(i,j),\max(i,j)}}{4}$, and constant scalar energy offset $c_0 = \lambda B^2 + \sum_i \frac{Q_{ii}}{2} + \sum_{i < j} \frac{Q_{ij}}{4}$.
+For every basis state $|x\rangle$, $\langle x | \hat{H}_C | x \rangle = C(x)$, proving exact ground-state equivalence.

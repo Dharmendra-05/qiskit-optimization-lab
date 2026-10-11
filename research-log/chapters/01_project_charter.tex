@@ -1,0 +1,20 @@
+\section{Project Charter}
+
+\subsection{Context and Motivation}
+The global transition toward sustainable energy requires allocating trillions of dollars across competing clean infrastructure assets, such as utility-scale solar PV, offshore wind farms, battery energy storage systems (BESS), geothermal power stations, and biomass facilities. In reality, energy transition funds operate under strict capital expenditure constraints (e.g., funding exactly $B$ flagship initiatives from a candidate catalog of $N$ assets) while navigating meteorological generation intermittency and asset covariance risk.
+
+\subsection{Hackathon Challenge Alignment}
+The Qiskit Fall Fest 2026 Track 2 (\textit{Open-Domain Optimization \& Real-World Solvers}) challenges participants to identify a compelling real-world dilemma, translate it into a binary combinatorial model, and solve it using Qiskit. In the official reference notebook \cite{tirado2026qaoa}, the organizers explicitly highlighted:
+\begin{quote}
+``The challenge centres on a portfolio-selection problem: from a universe of assets, choose a subset that maximizes expected return while penalizing risk, subject to a budget constraint... This problem is a natural fit for QAOA... but it adds the essential ingredient of a constraint, which you must fold into the encoding.''
+\end{quote}
+The Quantum Resource Optimizer project fulfills this exact challenge.
+
+\subsection{Project Objectives}
+\begin{enumerate}
+    \item Formulate a rigorous Quadratic Unconstrained Binary Optimization (QUBO) model encoding Markowitz mean-variance utility and a quadratic budget constraint.
+    \item Map the binary problem into an Ising Cost Hamiltonian $\hat{H}_C$ using Qiskit's \texttt{SparsePauliOp} and prove ground-state numerical equivalence across all computational basis states.
+    \item Implement an automated, reproducible QAOA solver using modern Qiskit 1.0+ and 2.0+ primitives (\texttt{QAOAAnsatz}, \texttt{StatevectorEstimator}, and \texttt{StatevectorSampler}).
+    \item Benchmark quantum performance against classical exact brute force and greedy heuristics across metrics of Approximation Ratio and Feasibility Yield.
+    \item Maintain scientific integrity by documenting hardware noise limitations and the realities of physical NISQ processors.
+\end{enumerate}

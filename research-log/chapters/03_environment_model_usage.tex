@@ -1,0 +1,20 @@
+\section{Execution Environment and AI Model Provenance}
+
+\subsection{Computing Environment}
+\begin{itemize}
+    \item \textbf{Operating System:} Microsoft Windows 11 Pro (x86\_64)
+    \item \textbf{Python Runtime:} CPython 3.12.13 in isolated virtual environment (\texttt{.venv})
+    \item \textbf{Core Quantum Framework:} Qiskit 2.5.2 and Qiskit Aer 0.17.2
+    \item \textbf{Scientific Packages:} NumPy 2.5.4, SciPy 1.18.1, Rustworkx 0.18.1, Matplotlib 3.11.2, Pytest 9.1.1
+\end{itemize}
+
+\subsection{Tool and AI Model Usage Tracking}
+Strictly per project directives, AI assistance was configured across three distinct roles:
+\begin{enumerate}
+    \item \textbf{Primary Agent (Gemini 3.8 Flash High in Google Antigravity):} Responsible for architecture design, requirements audit, mathematical derivations, core algorithm implementation, testing, experiment sweeps, visualization generation, and documentation drafting.
+    \item \textbf{Git Staging Agent (OpenCode):} Configured solely for agent skill maintenance and preparing Git commit stages following explicit user authorization.
+    \item \textbf{Supplementary Technical Review (ChatGPT):} Utilized for independent conceptual review and algorithmic sanity checks.
+    \item \textbf{Human Reviewer (Dharmendra P.):} Audits all generated code, validates outputs, authorizes commits, and performs GitHub pushes.
+\end{enumerate}
+
+Zero proprietary API keys or external authentication credentials were used, as all Qiskit simulations run deterministically via local statevector primitives.
