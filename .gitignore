@@ -1,0 +1,277 @@
+# =============================================================================
+# .gitignore - Qiskit Fall Fest 2026 / Track 2 Optimization
+# Project-specific exclusions for a Python + Qiskit research repository
+# (Windows development environment).
+#
+# IMPORTANT - THIS FILE IS ORDER-SENSITIVE. Later rules override earlier rules.
+# The "intentionally tracked" negations at the bottom are the safety net.
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+# 1. Python bytecode and cache directories
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pyd
+cython_debug/
+*.pdb
+__pypackages__/
+.eggs/
+pip-wheel-metadata/
+
+
+# -----------------------------------------------------------------------------
+# 2. Virtual environments
+# -----------------------------------------------------------------------------
+# NOTE: ".env" below is the environment-variable FILE, not a venv directory.
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+Pipfile.lock
+poetry.lock
+.uv-cache/
+
+
+# -----------------------------------------------------------------------------
+# 3. Environment variables, secrets and credentials
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Credentials / private keys / tokens
+credentials.json
+secrets.yml
+secrets.yaml
+secrets*.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+.netrc
+.npmrc
+.pypirc
+
+# Qiskit / IBM Quantum account credentials should never enter the repo.
+qiskit-ibm-runtime.json
+
+
+# -----------------------------------------------------------------------------
+# 4. Jupyter
+# -----------------------------------------------------------------------------
+.ipynb_checkpoints/
+.checkpoints/
+**/.ipynb_checkpoints/
+.jupyter/
+# NOTE: *.ipynb files themselves ARE tracked on purpose - the hackathon rules
+# require submitted notebooks to be committed WITH their outputs displayed.
+# Do NOT add "*.ipynb" or "outputs/" style rules that would strip cell outputs.
+
+
+# -----------------------------------------------------------------------------
+# 5. Build and distribution artifacts
+# -----------------------------------------------------------------------------
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+
+# -----------------------------------------------------------------------------
+# 6. Test, type-check and lint caches
+# -----------------------------------------------------------------------------
+.pytest_cache/
+.cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+junit*.xml
+*.cover
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+.nosemgrep/
+.pyre_older/
+
+
+# -----------------------------------------------------------------------------
+# 7. IDE and editor files
+# -----------------------------------------------------------------------------
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.code-workspace
+
+
+# -----------------------------------------------------------------------------
+# 8. OS temporary files
+# -----------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.TemporaryItems
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+hiberfil.sys
+ehdrv*.sys
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+*.swo
+*~
+.vim/
+.nvimlog
+
+
+# -----------------------------------------------------------------------------
+# 9. LaTeX auxiliary files
+#    (unambiguous build byproducts - safe to ignore repo-wide)
+# -----------------------------------------------------------------------------
+*.aux
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.out
+*.toc
+*.nav
+*.snm
+*.vrb
+*.log
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.synctex
+*.synctex.gz
+*.spl
+*.xdv
+*.dvi
+*.glo
+*.gls
+*.ist
+*.idx
+*.ilg
+*.ind
+*.upa
+*.tuo
+.*-script.sh
+latexmk.log
+
+# research-log/logs/ holds research notes that MUST stay in the repository,
+# so it is re-admitted explicitly after the *.log rule above.
+!research-log/logs/
+!research-log/logs/**
+
+
+# -----------------------------------------------------------------------------
+# 10. Generated experiment outputs
+# -----------------------------------------------------------------------------
+# Ignore everything produced under outputs/, then re-open the directory
+# structure so it can be traversed, and finally re-admit .gitkeep placeholders
+# so the folders survive a fresh clone.
+outputs/**
+!outputs/**/
+!outputs/**/.gitkeep
+
+# Generated PDFs inside research-log/ (LaTeX build products).
+# PDFs elsewhere in the repo (e.g. docs/) are NOT ignored.
+research-log/**/*.pdf
+
+
+# -----------------------------------------------------------------------------
+# 11. Safety net - files that must ALWAYS stay trackable
+# -----------------------------------------------------------------------------
+# No blanket rule above targets any of these. They are negated explicitly so
+# that future edits to this file cannot accidentally drop source code,
+# documentation, bibliography, reference notes or skill definitions.
+
+# Preserve .gitkeep anywhere in the repository (not just under outputs/).
+!.gitkeep
+
+# Source code, tests and documentation
+!src/
+!tests/
+!docs/
+!assets/
+!references/
+!research-log/
+
+# Bibliography and reference notes
+!*.bib
+!*.bbl.bib
+!references/**
+
+# Skill definitions
+!.agent/skills/
+!.agent/skills/**
+!**/SKILL.md
+
+# Submission-critical markdown and notebooks
+!*.md
+!*.ipynb
+
+
+# -----------------------------------------------------------------------------
+# 12. Local-only agent skills (never pushed to the submission repository)
+# -----------------------------------------------------------------------------
+# These tools are kept on this machine for convenience only. They are deliberately
+# excluded from version control so they cannot reach the GitHub submission.
+# This rule MUST stay after section 11, because section 11 re-admits
+# ".agent/skills/**" and "**/SKILL.md"; only a later rule can override them.
+.agent/skills/AI Water-mark Remover/
